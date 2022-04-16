@@ -1,0 +1,110 @@
+PQ version 1.6
+General options:
+ -alignment <FileName> 
+       File with input alignment in fasta format
+       Required, no default value
+ -out <FileName>
+       Output file
+       Default: pq_out.tre
+ -iniTree <FileName> 
+       File with initial tree in Newick format, optional
+       If -iniTree is given, growing tree by stepwise addition is omitted
+ -h
+       Print this manual and exit
+
+Scoring options:
+ -pwm <FileName>
+      File with scoring matrix (e.g. BLOSUM62.txt) 
+      If not given, the identity matrix is used
+ -alpha <Positive integer>
+      Multiplication coefficient for pq-pairs supported twice
+      Default: 1
+ -gapOpt <0|1|2>
+      Maximum number of gaps among four letters in a position-quartet pair
+      If 0, pq-pairs with at least one gap are ignored
+      If 1, pq-pairs with one gap are scored, with two gaps are ignored
+      If 2, all gaps are scored as residues/nucleotides
+      Default: 0
+
+Optimization options:
+ -grType <String>
+      "one": grow a single tree by stepwise addition of leaves,
+      "multiple":  grow many trees
+      Default: "multiple"
+      --treeNum <Positive integer>
+           for "multiple" option: number of trees to grow
+           Default: 10
+      --chType <String>
+           "bestScore" : choose tree with best score
+           "consensus" : make consensus of trees
+           "genitor" : search for optimal tree with genetic algorithm
+                --iterNum <Positive integer>
+                    for "genitor" option: number of iterations to perform
+                    Default: 10 times tree size
+                --iterNew <Positive integer>
+                    for "genitor" option: number of iterations during which leader hasn't changed to stop after
+                    Default: 5 times tree size
+                --iterLim <Positive integer>
+                    for "genitor" option: number of failures to stop after
+                    Default: 10
+      Default: "bestScore"
+      Growing is not performed if an initial tree is given
+ -randLeaves <0 or 1>
+      If 1, shuffle the input order of sequences
+      Switching to 0 makes sense for grType = "one")
+      Default: 1
+ -nniType <String>
+      "none": do not perform NNI search,
+      "direct" or "gradient": perform gradient NNI hill climbing,
+      "simple": perform simple NNI hill climbing,
+      "trajectory": perform NNI Monte-Carlo search
+      Default: "direct"
+      --trTime <Positive integer>
+           For "trajectory"option: number of iterations
+           Default : 1000
+      --initTemp <Positive integer>
+           For "trajectory"option: initial temperature
+           Default: 1000
+      --mcStyle <1|2|3>
+           For "trajectory"option: style of Monte-Carlo search
+           Default: 1
+ -sprType <String>
+      "none": do not perform SPR search,
+      "direct" or "gradient": perform gradient SPR hill climbing,
+      "simple": perform simple SPR hill climbing,
+      Default: "none"
+
+Result quality estimations:
+ -neiZscore <0 or 1>
+      If 1, calculate Z-score based on scores of neighboring trees
+      Default: 0
+ -randTreeZscore <0 or 1>
+      If 1, calculate Z-score based on scores of random trees
+      Default: 0
+      --randTreeNum <Positive integer>
+           For randTreeZscore: number of random trees
+           Default : 10
+ -distrFile <FileName>
+      File name to write scores of neighboring and/or random trees
+      Optional, no default value
+Result statistics estimation: -resultTreeNum <int>
+      Number of trees to generate
+      Default: 1
+ -sampleType <string>
+      how to generate sample trees
+      "simple" - just generate multiple trees
+      "bootstrap" - generate bootstrap trees(first tree  is result tree, others - bootstrap)
+      "jackknife" - the same, but generate jackknife trees
+      Default: "simple"
+      --removeFraction <double>
+          fraction of positions to be removed during jackknife
+          Default: "0.5"
+ -doConsensus <0 or 1>
+      do consensus of sampled trees or not
+      Default: "0"
+      --consensus_threshold <float>
+          in how many leaves branch must occured to be in majority rule consensus
+          Default: "0.5"
+      --extended <0 or 1>
+          whether to use simple majority rule or extended one
+          Default: "1"

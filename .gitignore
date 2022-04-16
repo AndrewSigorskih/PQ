@@ -2,3 +2,4 @@ PQ.exe
 link/*
 data/*
 out/*
+*.sh
