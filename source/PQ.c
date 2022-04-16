@@ -268,7 +268,7 @@ int main(int argc, char** argv)
                 known = 1;
                 if (startOptionsNum + 1 < argc)
                 {
-                    outFileName = (char *)malloc(sizeof(char) * (strlen(argv[startOptionsNum + 1] + 1)));
+                    outFileName = (char *)malloc(sizeof(char) * (strlen(argv[startOptionsNum + 1]) + 1));
                     strcpy(outFileName, argv[startOptionsNum + 1]);
                 }
                 printf("Start computing\n");
@@ -893,8 +893,10 @@ int main(int argc, char** argv)
         }
         for(i = 0; i < resultTreeNum; ++i)
         {
-            fileName = malloc(sizeof(char) * (strlen(outFileName) + 6 + i / 10));
-            sprintf(fileName, "%s_%u.nwk", outFileName, i);
+            //fileName = malloc(sizeof(char) * (strlen(outFileName) + 6 + i / 10));
+            size_t len = snprintf(NULL, 0, "%s_%u.nwk", outFileName, i);
+	    fileName = malloc(sizeof(char) * (len + 1));
+	    sprintf(fileName, "%s_%u.nwk", outFileName, i);
             treeWrite(resultTrees[i]->tree, fileName);
         }
     }
