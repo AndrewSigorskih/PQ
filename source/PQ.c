@@ -18,17 +18,20 @@
 
 void printLongHelp(void)
 {
-    printf("PQ version 1.6\n");
+    printf("PQ version 1.6.1\n");
     printf("General options:\n");
     printf(" -alignment <FileName> \n");
     printf("       File with input alignment in fasta format\n");
     printf("       Required, no default value\n");
     printf(" -out <FileName>\n");
-    printf("       Output file\n");
-    printf("       Default: pq_out.tre\n");
+    printf("       Output file will be written to <FileName>.nwk\n");
+    printf("       (<FileName>_i.nwk in case of multiple output trees)\n");
+    printf("       Default: pq_out.nwk\n");
     printf(" -iniTree <FileName> \n");
     printf("       File with initial tree in Newick format, optional\n");
     printf("       If -iniTree is given, growing tree by stepwise addition is omitted\n");
+    printf(" -h or -help or --help \n");
+    printf("       Print help message and exit\n");
     printf("\n");
     printf("Scoring options:\n");
     printf(" -pwm <FileName>\n");
@@ -105,7 +108,7 @@ void printLongHelp(void)
     printf(" -distrFile <FileName>\n");
     printf("      File name to write scores of neighboring and/or random trees\n");
     printf("      Optional, no default value\n");
-    printf("Result statistics estimation:");
+    printf("Result statistics estimation:\n");
     printf(" -resultTreeNum <int>\n");
     printf("      Number of trees to generate\n");
     printf("      Default: 1\n");
@@ -132,7 +135,7 @@ void printLongHelp(void)
 
 void printHelp(char *command)
 {
-    /* printf("Help message for PQ ver 1.5\n"); */
+    /* printf("Help message for PQ ver 1.6\n"); */
     printf("Usage:\n");
     printf("%s -alignment <FileName> -out <FileName>\n", command);
     printf("\t[-iniTree <FileName>] [-pwm <FileName>]\n");
@@ -567,9 +570,9 @@ int main(int argc, char** argv)
     }
     if (outFileName == NULL)
     {
-        fprintf(stderr, "Warning: no output file name is given; the result will be written to \"pq_out.tre\"\n");
-        outFileName = (char *)malloc(sizeof(char) * 12);
-        strcpy(outFileName, "pq_out.tre");
+        fprintf(stderr, "Warning: no output file name is given; the result will be written to \"pq_out.nwk\"\n");
+        outFileName = (char *)malloc(sizeof(char) * 8);
+        strcpy(outFileName, "pq_out");
     }
 
 /***********************************************************
@@ -881,23 +884,36 @@ int main(int argc, char** argv)
         treeLCAFinderCalculate(result->tree);
         result->score = countScoreHash(alignmentSample[0], result->tree,
         pwmMatrix, alpha, gapOpt, NULL, permutation);
-        free(treesTemp);
-        treeConsensusWrite(result->tree, outFileName);
+        free(treesTemp); //!!!
+        size_t len = snprintf(NULL, 0, "%s.nwk", outFileName);
+        fileName = malloc(sizeof(char) * (len + 1));
+        sprintf(fileName, "%s.nwk", outFileName);
+        treeConsensusWrite(result->tree, fileName);
         treeDelete(result->tree);
     }
     else
     {
-        if (doConsensus)
+        if (resultTreeNum == 1)
         {
+            if (doConsensus)
+            {
             fprintf(stderr, "Num of trees is equal to 1, isn't nessesary to do consensus\n");
+            }
+            size_t len = snprintf(NULL, 0, "%s.nwk", outFileName);
+            fileName = malloc(sizeof(char) * (len + 1));
+            sprintf(fileName, "%s.nwk", outFileName);
+            treeWrite(resultTrees[0]->tree, fileName);
         }
-        for(i = 0; i < resultTreeNum; ++i)
+        else
         {
+           for(i = 0; i < resultTreeNum; ++i)
+            {
             //fileName = malloc(sizeof(char) * (strlen(outFileName) + 6 + i / 10));
             size_t len = snprintf(NULL, 0, "%s_%u.nwk", outFileName, i);
-	    fileName = malloc(sizeof(char) * (len + 1));
-	    sprintf(fileName, "%s_%u.nwk", outFileName, i);
+            fileName = malloc(sizeof(char) * (len + 1));
+            sprintf(fileName, "%s_%u.nwk", outFileName, i);
             treeWrite(resultTrees[i]->tree, fileName);
+            } 
         }
     }
     

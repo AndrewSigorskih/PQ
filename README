@@ -1,16 +1,17 @@
-PQ version 1.6
+PQ version 1.6.1
 General options:
  -alignment <FileName> 
        File with input alignment in fasta format
        Required, no default value
  -out <FileName>
-       Output file
-       Default: pq_out.tre
+       Output file will be written to <FileName>.nwk
+       (<FileName>_i.nwk in case of multiple output trees)
+       Default: pq_out.nwk
  -iniTree <FileName> 
        File with initial tree in Newick format, optional
        If -iniTree is given, growing tree by stepwise addition is omitted
- -h
-       Print this manual and exit
+ -h or -help or --help 
+       Print help message and exit
 
 Scoring options:
  -pwm <FileName>
@@ -87,7 +88,8 @@ Result quality estimations:
  -distrFile <FileName>
       File name to write scores of neighboring and/or random trees
       Optional, no default value
-Result statistics estimation: -resultTreeNum <int>
+Result statistics estimation:
+ -resultTreeNum <int>
       Number of trees to generate
       Default: 1
  -sampleType <string>
