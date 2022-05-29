@@ -1,22 +1,3 @@
-/*  Copyright 2016, 2017 Andrew Sigorskih, Dmitry Penzar, Sergei Spirin
-
-    This file is part of UMAST, taken from our another program PQ.
-
-    UMAST is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    UMAST is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with UMAST (a file named "COPYING.txt").
-    If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include "Branch.h"
 
 size_t getBitMaskIntSize(unsigned size){
@@ -341,14 +322,49 @@ char branchContradict(Branch* br1, Branch* br2)
 
 Branch* branchReverse(Branch* br)
 {
-    int i = 0;
+    int i;
+    INT j;
+    Branch* maxBranch = branchCreate(br->size);
     Branch* revBranch = branchCreate(br->size);
-    for(i = 0; i < branchGetIntSize(br); ++i)
+
+    for (i = 0; i < br->size; i++)
+    {
+        j = 1;
+        j = j << (i & (intSize-1));
+        maxBranch->branch[i / intSize] |= j;
+        //branchPrint(maxBranch);
+    }
+    
+    for (i = 0; i < branchGetIntSize(br); ++i)
+    {
+        revBranch->branch[i] = br->branch[i] ^ maxBranch->branch[i];
+    }
+
+    /*for(i = 0; i < branchGetIntSize(br); ++i)
     {
         revBranch->branch[i] = ~br->branch[i];
-    }
+    }*/
     revBranch->leavesNum = -1;
+    branchDelete(maxBranch);
     return revBranch;
+}
+
+Branch* branchXor(Branch* br1, Branch* br2)
+{
+    int i = 0;
+    Branch* xorBranch = NULL;
+    if (br1->size != br2->size)
+    {
+      fprintf(stderr, "branchXoR: Branches are not of the same size\n");
+      exit(1);
+    }
+    xorBranch = branchCreate(br1->size);
+    for(i = 0; i < branchGetIntSize(br1); ++i)
+    {
+        xorBranch->branch[i] = br1->branch[i] ^ br2->branch[i];
+    }
+    xorBranch->leavesNum = -1;
+    return xorBranch;
 }
 
 Branch* branchCopy(Branch* br)
@@ -421,7 +437,7 @@ int branchCompare(Branch* br1, Branch* br2)
 
 int vBranchCompare(const void* branch1, const void* branch2)
 {
-    int i = 0;
+    //int i = 0;
     Branch* brPtr1;
     Branch* brPtr2;
 
@@ -430,3 +446,32 @@ int vBranchCompare(const void* branch1, const void* branch2)
 
     return branchCompare(brPtr1, brPtr2);
 }
+
+void branchCalculateLeavesPosNum(Branch* br){
+    unsigned i = 0;
+    unsigned j = 0;
+    unsigned k = 0;
+    int curSize = 0;
+    for(i = 0; i < branchGetIntSize(br); ++i)
+    {
+        j = 0;
+        while(j < intSize)
+        {
+            k = countZeroRightNum((br->branch[i]) >> j);
+            if (k != intSize)
+            {
+                curSize++;
+            }
+            j += k + 1;
+        }
+    }
+    br->leavesNum = curSize;
+} //branchCalculateLeavesPosNum
+
+int branchGetLeavesPosNum(Branch* br)
+{
+    if (br->leavesNum == -1){
+        branchCalculateLeavesPosNum(br);
+    }
+    return br->leavesNum;
+} //branchGetLeavesPosNum

@@ -1,26 +1,4 @@
-/*  Copyright 2016, 2017 Andrew Sigorskih, Dmitry Penzar, Sergei Spirin 
-
-    This file is part of UMAST, taken from our another program PQ.
-
-    UMAST is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    UMAST is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with UMAST (a file named "COPYING.txt"). 
-    If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-
 #include "Tree.h"
-
 
 static const char DEFAULT_MAX_NODE_SIZE = 3;
 static const size_t default_strSize = 100;
@@ -345,7 +323,7 @@ Tree* treeFromNewick(char* newick)
  
     nodeStackDelete(stack);
 
-
+/*
     //if (nodes[0]->neiNum < 2)
    // {
   //      fprintf(stderr, "Error, tree must contain at least two leaves,\
@@ -359,7 +337,7 @@ Tree* treeFromNewick(char* newick)
    //     fprintf(stderr, "Error, wrong newick format, Tree:treeFromNewick\n");
    //     exit(1);
    // }
-
+*/
 
     Node* nei1 = NULL;
     Node* nei2 = NULL;
@@ -1241,10 +1219,10 @@ Tree* treeNNIMove(Tree* tree, unsigned nodeID, unsigned neiID, char variant,\
     Node* end1;
     Node* end2;
     Node* temp;
-    char nei11 = 0;
-    char nei12 = 0;
-    char nei21 = 0;
-    char nei22 = 0;
+    unsigned char nei11 = 0;
+    unsigned char nei12 = 0;
+    unsigned char nei21 = 0;
+    unsigned char nei22 = 0;
     char nei2ID = 0;
 
 
@@ -1755,7 +1733,7 @@ Tree* treePrune(Tree* source, char** leavesNames, size_t leavesNum,
     {
         printf("pruneStackSize : %d\n", pruneStack->curSize);
         printf("result Leaves Num %d need %zu\n", result->leavesNum, leavesNum);
-        raiseError("Something've gone wrong\n",
+        raiseError("Something've gone wrong",
                 __FILE__, __FUNCTION__, __LINE__);
     }
     nodeStackPop(pruneStack);
@@ -1774,6 +1752,21 @@ Tree* treePrune(Tree* source, char** leavesNames, size_t leavesNum,
     return result;
 }/* treePrune */
 
+int* calculateLeavesPermutation(Tree* tree1, Tree* tree2)
+{
+    int i;
+    char** leaves1;
+    char** leaves2;
+    int* permutation;
+    
+    leaves1 = treeGetNames(tree1);
+    leaves2 = treeGetNames(tree2);
+    
+    permutation = calculatePermutation(leaves1, leaves2, tree1->leavesNum);
+    free(leaves1);
+    free(leaves2);
+    return permutation;
+} //calculateLeavesPermutation
 
 /* test 
 int main()

@@ -2,5 +2,7 @@ PQ.exe
 link/*
 data/*
 out/*
+tmp/*
 *.sh
 fixes.lst
+*/.vscode

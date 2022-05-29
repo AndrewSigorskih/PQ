@@ -28,7 +28,7 @@ unsigned treeIsUnique(TreeWithScore* intree, int pos, TreeWithScore** trees, uns
 	return unique;
 }
 
-TreeWithScore* crossover(TreeWithScore* tree1, TreeWithScore* tree2,\
+TreeWithScore* umast_cross(TreeWithScore* tree1, TreeWithScore* tree2,\
 			HashAlignment* alignment, int alpha,\
 			 GapOpt gapOpt, PWM* pwmMatrix, INT**** hashScore)
 {
@@ -104,9 +104,57 @@ TreeWithScore* crossover(TreeWithScore* tree1, TreeWithScore* tree2,\
 	return result;
 }
 
+TreeWithScore* fuse_cross(TreeWithScore* tree1, TreeWithScore* tree2,\
+			HashAlignment* alignment, int alpha,\
+			 GapOpt gapOpt, PWM* pwmMatrix, INT**** hashScore)
+{
+	char** treeNames;
+    char** seqNames;
+    int* permutation;
+	TreeWithScore* result;
+
+	result = treeWithScoreCreate(fuseTrees(tree1->tree, tree2->tree), 0);
+	//printf("trees successfuly fused\n");
+	treeNames = treeGetNames(result->tree);
+    seqNames = hashAlignmentGetSeqNames(alignment);
+    permutation = calculatePermutation(treeNames, seqNames,
+                                       alignment->alignmentSize);
+	free(treeNames);
+    free(seqNames);
+	result->score = countScoreHash(alignment, result->tree, pwmMatrix,
+                           alpha, gapOpt, hashScore, permutation);
+	free(permutation);
+	//printf("score done\n");
+    return result;
+}
+
+TreeWithScore* crossover(TreeWithScore* tree1, TreeWithScore* tree2,\
+			HashAlignment* alignment, int alpha,\
+			 GapOpt gapOpt, PWM* pwmMatrix, INT**** hashScore, unsigned char crossType)
+{
+	TreeWithScore* result;
+	switch(crossType)
+	{
+		case 0:
+			result = umast_cross(tree1, tree2, alignment, alpha,\
+			gapOpt, pwmMatrix, hashScore);
+			break;
+		case 1:
+			//printf("Starting fuse crossover!\n");
+			result = fuse_cross(tree1, tree2, alignment, alpha,\
+			gapOpt, pwmMatrix, hashScore);
+			//printf("fuse crossover done\n");
+			break;
+		default:
+			fprintf(stderr, "Wrong value for crossover type: %c, genitor:crossover\n", crossType);
+			exit(1);
+	}
+	return result;
+}
+
 TreeWithScore* genitor(TreeWithScore** trees, unsigned treeNum, HashAlignment* alignment,\
 					int alpha, GapOpt gapOpt, PWM* pwmMatrix, INT**** hashScore, unsigned iterNum, \
-					unsigned iterNew, unsigned iterLim)
+					unsigned iterNew, unsigned iterLim, unsigned char crossType)
 {
 	INT leaderScore;
 	int* permutation;
@@ -188,7 +236,7 @@ TreeWithScore* genitor(TreeWithScore** trees, unsigned treeNum, HashAlignment* a
 		}
 
 		offspring = crossover(population[i], population[j], alignment, alpha,\
-							gapOpt, pwmMatrix, hashScore);
+							gapOpt, pwmMatrix, hashScore, crossType);
 
 		treeNames = treeGetNames(offspring->tree);
 		permutation = calculatePermutation(treeNames, seqNames, alignment->alignmentSize);
@@ -274,7 +322,7 @@ free(initPop);
 		}
 
 		offspring = crossover(population[i], population[j], alignment, alpha,\
-							gapOpt, pwmMatrix, hashScore);
+							gapOpt, pwmMatrix, hashScore, crossType);
 
 		treeNames = treeGetNames(offspring->tree);
 		permutation = calculatePermutation(treeNames, seqNames, alignment->alignmentSize);

@@ -68,6 +68,10 @@ void printLongHelp(void)
     printf("                --iterLim <Positive integer>\n");
     printf("                    for \"genitor\" option: number of failures to stop after\n");
     printf("                    Default: 10\n");
+    printf("                --crossType <String>\n");
+    printf("                    \"umast\" perform umast-based crossover\n");
+    printf("                    \"fuse\" perform tree-fusing based crossover\n");
+    printf("                    Default: umast\n");
     printf("      Default: \"bestScore\"\n");
     printf("      Growing is not performed if an initial tree is given\n");
     printf(" -randLeaves <0 or 1>\n");
@@ -174,6 +178,7 @@ int main(int argc, char** argv)
     unsigned iterNum = 0;
     unsigned iterNew = 0;
     unsigned iterLim = 10; 
+    unsigned char crossType = 0;
     char* nniType;
     unsigned long int trTime = 1000;
     unsigned int initTemp = 1000;
@@ -358,6 +363,27 @@ int main(int argc, char** argv)
                 if (startOptionsNum + 1 < argc)
                 {
                     iterLim = atoi(argv[startOptionsNum + 1]);
+                }
+            }
+            if (strcmp(param, "--crossType") == 0)
+            {
+                known = 1;
+                if (startOptionsNum + 1 < argc)
+                {
+                    if ((strcmp(argv[startOptionsNum + 1], "umast") == 0)) 
+                    {
+                       crossType = 0;
+                    }
+                    else if ((strcmp(argv[startOptionsNum + 1], "fuse") == 0)) 
+                    {
+                        crossType = 1;
+                    }
+                    else
+                    {
+                        fprintf(stderr, "Error: wrong value for crossType: %s\n", argv[startOptionsNum + 1]);
+                        fprintf(stderr, "crossType should be \"umast\" or \"fuse\"\n");
+                        exit(1);
+                    }
                 }
             }
             if (strcmp(param, "-nniType") == 0)
@@ -668,7 +694,8 @@ int main(int argc, char** argv)
                 {
                     iterNew = 5 * trees[0]->tree->leavesNum;
                 }
-                result = genitor(trees, treeNum, alignment, alpha, gapOpt, pwmMatrix, hashScore, iterNum, iterNew, iterLim);
+                result = genitor(trees, treeNum, alignment, alpha, gapOpt, pwmMatrix, hashScore,\
+                                iterNum, iterNew, iterLim, crossType);
                 for(i = 0; i < treeNum; ++i)
                 {
                     treeWithScoreDelete(trees[i]);

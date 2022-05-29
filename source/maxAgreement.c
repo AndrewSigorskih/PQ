@@ -377,65 +377,6 @@ unsigned* treeRootAndTopSort(Tree* tree, unsigned nodeID, unsigned neighbourID, 
     return result;
 } //treeRootAndTopSort
 
-
-int* calculateLeavesPermutation(Tree* tree1, Tree* tree2)
-{
-    int i;
-    char** leaves1;
-    char** leaves2;
-    int* permutation;
-    //leaves1 = (char**)malloc(sizeof(char*) * tree1->leavesNum);
-    //leaves2 = (char**)malloc(sizeof(char*) * tree2->leavesNum);
-
-    leaves1 = treeGetNames(tree1);
-    leaves2 = treeGetNames(tree2);
-    //for (i = 0; i < tree1->leavesNum; i++)
-    //{
-    //    leaves1[i] = tree1->leaves[i]->name;
-    //}
-    //for (i = 0; i < tree2->leavesNum; i++)
-    //{
-    //    leaves2[i] = tree2->leaves[i]->name;
-    //}
-
-    permutation = calculatePermutation(leaves1, leaves2, tree1->leavesNum);
-    free(leaves1);
-    free(leaves2);
-    return permutation;
-} //calculateLeavesPermutation
-
-void branchCalculateLeavesPosNum(Branch* br){
-    unsigned i = 0;
-    unsigned j = 0;
-    unsigned k = 0;
-    int curSize = 0;
-    for(i = 0; i < branchGetIntSize(br); ++i)
-    {
-        j = 0;
-        while(j < intSize)
-        {
-            k = countZeroRightNum((br->branch[i]) >> j);
-            if (k != intSize)
-            {
-                curSize++;
-            }
-            j += k + 1;
-        }
-    }
-    br->leavesNum = curSize;
-}
-
-int branchGetLeavesPosNum(Branch* br)
-{
-    if (br->leavesNum == -1){
-        branchCalculateLeavesPosNum(br);
-    }
-    return br->leavesNum;
-} //branchGetLeavesPosNum
-
-
-
-
 int* getTreeLeavesPos(Tree* tree)
 {
     int* leavesPosArr;

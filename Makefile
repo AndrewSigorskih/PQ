@@ -75,6 +75,9 @@ bootstrap.o : $(SOURCE_DIR) $(LINK_DIR) $(SOURCE_DIR)/bootstrap.c
 maxAgreement.o : $(SOURCE_DIR) $(LINK_DIR) $(SOURCE_DIR)/maxAgreement.c
 	gcc -O2 -c $(SOURCE_DIR)/maxAgreement.c -o $(LINK_DIR)/maxAgreement.o
 
+fuseTrees.o : $(SOURCE_DIR) $(LINK_DIR) $(SOURCE_DIR)/fuseTrees.c
+	gcc -O2 -c $(SOURCE_DIR)/fuseTrees.c -o $(LINK_DIR)/fuseTrees.o
+
 genitor.o : $(SOURCE_DIR) $(LINK_DIR) $(SOURCE_DIR)/genitor.c
 	gcc -O2 -c $(SOURCE_DIR)/genitor.c -o $(LINK_DIR)/genitor.o
 
@@ -85,7 +88,7 @@ PQ : PQ.o add.o Record.o \
     RecordList.o HashAlignment.o PWM.o countScore.o countScoreHash.o\
     Tree.o RMQ.o growTree.o TreeWS.o nniTree.o sprTree.o estimate.o\
     Branch.o BranchArray.o BranchAllocator.o consensus.o bootstrap.o\
-    maxAgreement.o genitor.o
+    maxAgreement.o fuseTrees.o genitor.o
 	gcc $(LINK_DIR)/PQ.o $(LINK_DIR)/add.o\
 	    $(LINK_DIR)/Record.o $(LINK_DIR)/RecordList.o\
 	    $(LINK_DIR)/HashAlignment.o $(LINK_DIR)/PWM.o\
@@ -96,4 +99,4 @@ PQ : PQ.o add.o Record.o \
 	    $(LINK_DIR)/estimate.o $(LINK_DIR)/Branch.o\
 	    $(LINK_DIR)/BranchArray.o $(LINK_DIR)/BranchAllocator.o\
 	    $(LINK_DIR)/consensus.o $(LINK_DIR)/bootstrap.o\
-        $(LINK_DIR)/maxAgreement.o $(LINK_DIR)/genitor.o -lm -o PQ.exe
+        $(LINK_DIR)/maxAgreement.o $(LINK_DIR)/fuseTrees.o $(LINK_DIR)/genitor.o -lm -o PQ.exe

@@ -360,9 +360,9 @@ void parserTreeAdd(ParserTree* tree, BranchOcc* branchOcc,
         else // isSubset == 1
         {
             //printf("is subset = 1\n");
-            //fprintf(stderr,"Perhaps something've gone wrong. Please,\
-            //        make sure you've give branches in reverse order,\
-            //        if yes - inform me");
+            /*fprintf(stderr,"Perhaps something've gone wrong. Please,\
+                      make sure you've given branches in reverse order,\
+                      if yes - inform me"); */
             //exit(1);
             temp = parserNodeCreate(branchOcc);
             if (curNode == tree->root)
@@ -406,8 +406,8 @@ void parserTreeAdd(ParserTree* tree, BranchOcc* branchOcc,
 Tree* branchCounterToTree(BranchCounter* bc, char** names)
 {
     int i = 0;
-    char isSubset = 0;
-    ParserNode* temp = NULL;
+    //char isSubset = 0;
+    //ParserNode* temp = NULL;
     ParserNode* curNode = NULL;
     Branch* branch = NULL;
     INT p = 1;
@@ -417,7 +417,7 @@ Tree* branchCounterToTree(BranchCounter* bc, char** names)
     size_t curNodesNum = 0;
     size_t curLeavesNum = 0;
     BranchOcc** trivialBranches;
-    Branch* orBranch = NULL;
+    //Branch* orBranch = NULL;
     ParserNode** stack;
     size_t stackSize = 0;
     char ready;
@@ -615,9 +615,9 @@ BranchCounter* majorityRule(BranchCounter* bc, unsigned threshold)
 {
     BranchCounter* consensus = branchCounterCreate(10);
     int i = 0;
-    int j = 0;
-    int k = 0;
-    char take = 1;
+    //int j = 0;
+    //int k = 0;
+    //char take = 1;
     for(i = bc->size - 1; i >= 0; --i)
     {
         if (bc->array[i]->occurence > threshold)
@@ -680,7 +680,7 @@ Tree* makeConsensus(Tree** treeArray, size_t treeNum, double threshold,
     BranchCounter* consensus = NULL;
     BranchCounter* bc = NULL;
     free(permutation);
-    int j = 0;
+    //int j = 0;
     for(i = 1; i < treeNum; ++i)
     {
         treeNames = treeGetNames(treeArray[i]); 
