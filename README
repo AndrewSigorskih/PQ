@@ -1,4 +1,4 @@
-PQ version 1.6.1
+PQ version 2.5
 General options:
  -alignment <FileName> 
        File with input alignment in fasta format
@@ -48,6 +48,11 @@ Optimization options:
                 --iterLim <Positive integer>
                     for "genitor" option: number of failures to stop after
                     Default: 10
+                --crossType <String>
+                    for "genitor" option: crossover type
+                    "umast" perform umast-based crossover
+                    "fuse" perform tree-fusing based crossover
+                    Default: umast
       Default: "bestScore"
       Growing is not performed if an initial tree is given
  -randLeaves <0 or 1>

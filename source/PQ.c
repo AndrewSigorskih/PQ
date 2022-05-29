@@ -18,7 +18,7 @@
 
 void printLongHelp(void)
 {
-    printf("PQ version 1.6.1\n");
+    printf("PQ version 2.5\n");
     printf("General options:\n");
     printf(" -alignment <FileName> \n");
     printf("       File with input alignment in fasta format\n");
@@ -69,6 +69,7 @@ void printLongHelp(void)
     printf("                    for \"genitor\" option: number of failures to stop after\n");
     printf("                    Default: 10\n");
     printf("                --crossType <String>\n");
+    printf("                    for \"genitor\" option: crossover type\n");
     printf("                    \"umast\" perform umast-based crossover\n");
     printf("                    \"fuse\" perform tree-fusing based crossover\n");
     printf("                    Default: umast\n");
@@ -139,7 +140,7 @@ void printLongHelp(void)
 
 void printHelp(char *command)
 {
-    /* printf("Help message for PQ ver 1.6\n"); */
+    /* printf("Help message for PQ ver 1.6 or higher\n"); */
     printf("Usage:\n");
     printf("%s -alignment <FileName> -out <FileName>\n", command);
     printf("\t[-iniTree <FileName>] [-pwm <FileName>]\n");
