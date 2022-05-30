@@ -24,8 +24,7 @@ void printLongHelp(void)
     printf("       File with input alignment in fasta format\n");
     printf("       Required, no default value\n");
     printf(" -out <FileName>\n");
-    printf("       Output file will be written to <FileName>.nwk\n");
-    printf("       (<FileName>_i.nwk in case of multiple output trees)\n");
+    printf("       Path to output file\n");
     printf("       Default: pq_out.nwk\n");
     printf(" -iniTree <FileName> \n");
     printf("       File with initial tree in Newick format, optional\n");
@@ -598,8 +597,8 @@ int main(int argc, char** argv)
     if (outFileName == NULL)
     {
         fprintf(stderr, "Warning: no output file name is given; the result will be written to \"pq_out.nwk\"\n");
-        outFileName = (char *)malloc(sizeof(char) * 8);
-        strcpy(outFileName, "pq_out");
+        outFileName = (char *)malloc(sizeof(char) * 12);
+        strcpy(outFileName, "pq_out.nwk");
     }
 
 /***********************************************************
@@ -894,8 +893,8 @@ int main(int argc, char** argv)
         resultTrees[j] = result;
         removeHashScore(hashScore, alignment->alignmentSize);
     }
-    /* Output */
 
+    /* Output */
     if (doConsensus && resultTreeNum > 1)
     {
         treesTemp = malloc(sizeof(Tree*) * resultTreeNum);
@@ -912,43 +911,23 @@ int main(int argc, char** argv)
         treeLCAFinderCalculate(result->tree);
         result->score = countScoreHash(alignmentSample[0], result->tree,
         pwmMatrix, alpha, gapOpt, NULL, permutation);
-        free(treesTemp); //!!!
-        size_t len = snprintf(NULL, 0, "%s.nwk", outFileName);
-        fileName = malloc(sizeof(char) * (len + 1));
-        sprintf(fileName, "%s.nwk", outFileName);
-        treeConsensusWrite(result->tree, fileName);
+        free(treesTemp);
+        treeConsensusWrite(result->tree, outFileName);
         treeDelete(result->tree);
     }
     else
     {
-        if (resultTreeNum == 1)
+        if (doConsensus)
         {
-            if (doConsensus)
-            {
             fprintf(stderr, "Num of trees is equal to 1, isn't nessesary to do consensus\n");
-            }
-            size_t len = snprintf(NULL, 0, "%s.nwk", outFileName);
-            fileName = malloc(sizeof(char) * (len + 1));
-            sprintf(fileName, "%s.nwk", outFileName);
-            treeWrite(resultTrees[0]->tree, fileName);
         }
-        else
-        {
-           for(i = 0; i < resultTreeNum; ++i)
-            {
-            //fileName = malloc(sizeof(char) * (strlen(outFileName) + 6 + i / 10));
-            size_t len = snprintf(NULL, 0, "%s_%u.nwk", outFileName, i);
-            fileName = malloc(sizeof(char) * (len + 1));
-            sprintf(fileName, "%s_%u.nwk", outFileName, i);
-            treeWrite(resultTrees[i]->tree, fileName);
-            } 
-        }
+        treesWrite(resultTrees, outFileName, resultTreeNum);
     }
     
-
+    /* free memory */
     for(i = 0; i < resultTreeNum; ++i)
     {
-            treeWithScoreDelete(resultTrees[i]);
+        treeWithScoreDelete(resultTrees[i]);
     }
     free(resultTrees);
 
@@ -969,5 +948,3 @@ int main(int argc, char** argv)
 
     return 0;
 } /* main */
-
-
