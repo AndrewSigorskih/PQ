@@ -4,8 +4,7 @@ General options:
        File with input alignment in fasta format
        Required, no default value
  -out <FileName>
-       Output file will be written to <FileName>.nwk
-       (<FileName>_i.nwk in case of multiple output trees)
+       Path to output file
        Default: pq_out.nwk
  -iniTree <FileName> 
        File with initial tree in Newick format, optional
@@ -29,12 +28,15 @@ Scoring options:
 
 Optimization options:
  -grType <String>
-      "one": grow a single tree by stepwise addition of leaves,
+      "one": grow a single tree by stepwise addition of leaves (TaxAdd),
       "multiple":  grow many trees
       Default: "multiple"
       --treeNum <Positive integer>
            for "multiple" option: number of trees to grow
            Default: 10
+      --randTrees <0 or 1>
+           for "multiple" option: if 1, get treeNum random topologies instead of TaxAdd
+           Default: 0
       --chType <String>
            "bestScore" : choose tree with best score
            "consensus" : make consensus of trees

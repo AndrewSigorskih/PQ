@@ -104,11 +104,12 @@ TreeWithScore** growMultipleRandomTree(HashAlignment* alignment,
 {
     TreeWithScore** treeWSAR; 
     unsigned i;
-
+    printf("Grow %d random trees\n", treeNum);
     treeWSAR = (TreeWithScore**) calloc(sizeof(TreeWithScore*), treeNum);
     for(i = 0; i < treeNum; ++i)
     {
         treeWSAR[i] = randomTreeGrow(alignment, alpha, gapOpt, pwmMatrix, hashScore);
+        printf("Tree number %d, score = %lu\n", i + 1, treeWSAR[i]->score);
     }
     return treeWSAR;
 } /* growMultipleRandomTree */

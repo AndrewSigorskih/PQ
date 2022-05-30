@@ -48,12 +48,15 @@ void printLongHelp(void)
     printf("\n");
     printf("Optimization options:\n");
     printf(" -grType <String>\n");
-    printf("      \"one\": grow a single tree by stepwise addition of leaves,\n");
+    printf("      \"one\": grow a single tree by stepwise addition of leaves (TaxAdd),\n");
     printf("      \"multiple\":  grow many trees\n");
     printf("      Default: \"multiple\"\n");
     printf("      --treeNum <Positive integer>\n");
     printf("           for \"multiple\" option: number of trees to grow\n");
-    printf("           Default: 10\n");
+    printf("           Default: 10\n"); 
+    printf("      --randTrees <0 or 1>\n");
+    printf("           for \"multiple\" option: if 1, get treeNum random topologies instead of TaxAdd\n");
+    printf("           Default: 0\n");
     printf("      --chType <String>\n");
     printf("           \"bestScore\" : choose tree with best score\n");
     printf("           \"consensus\" : make consensus of trees\n");
@@ -177,7 +180,8 @@ int main(int argc, char** argv)
     unsigned treeNum = 10;
     unsigned iterNum = 0;
     unsigned iterNew = 0;
-    unsigned iterLim = 10; 
+    unsigned iterLim = 10; \
+    unsigned char randTrees = 0;
     unsigned char crossType = 0;
     char* nniType;
     unsigned long int trTime = 1000;
@@ -331,6 +335,14 @@ int main(int argc, char** argv)
                 if (startOptionsNum + 1 < argc)
                 {
                     treeNum = atoi(argv[startOptionsNum + 1]);
+                }
+            }
+            if (strcmp(param, "--randTrees") == 0)
+            {
+                known = 1;
+                if (startOptionsNum + 1 < argc)
+                {
+                    randTrees = atoi(argv[startOptionsNum + 1]);
                 }
             }
             if (strcmp(param, "--chType") == 0)
@@ -647,7 +659,12 @@ int main(int argc, char** argv)
         }
         else if (strcmp(grType, "multiple") == 0)
         {
-            trees = multipleTreeGrow(alignment, alpha, gapOpt, pwmMatrix, treeNum, hashScore);
+            if (randTrees == 0)
+            {
+                trees = multipleTreeGrow(alignment, alpha, gapOpt, pwmMatrix, treeNum, hashScore);
+            } else {
+                trees = growMultipleRandomTree(alignment, alpha, gapOpt, pwmMatrix, treeNum, hashScore);
+            }
 
             if (strcmp(chType, "bestScore") == 0)
             {
